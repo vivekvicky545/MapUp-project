@@ -23,11 +23,13 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ hashFiles('**/Dockerfile') }}
           restore-keys: |
             ${{ runner.os }}-buildx-
+
       - name: Login to AWS ECR
         uses: aws-actions/amazon-ecr-login@v1
         with:
-            registry: public.ecr.aws/o2n9l6n3/vivrepo
-            region: us-east-1  # Replace with your AWS region           
+          registry: public.ecr.aws/o2n9l6n3/vivrepo
+          region: us-east-1  # Replace with your AWS region
+
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -36,10 +38,7 @@ jobs:
           docker buildx build \
             --cache-from "type=local,src=/tmp/.buildx-cache" \
             --cache-to "type=local,dest=/tmp/.buildx-cache" \
-            --tag 344410514032.dkr.ecr.us-east-1.amazonaws.com/vivrepo:latest \
+            --tag public.ecr.aws/o2n9l6n3/vivrepo:latest \
             .
 
-          docker push 344410514032.dkr.ecr.us-east-1.amazonaws.com/vivrepo:latest
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          docker push public.ecr.aws/o2n9l6n3/vivrepo:latest
