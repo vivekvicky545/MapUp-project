@@ -24,12 +24,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  # Replace with your AWS region
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+
+      - name: Login to AWS ECR
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region us-east-1  # Replace with your AWS region
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/o2n9l6n3
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -39,7 +44,6 @@ jobs:
           docker buildx build \
             --cache-from "type=local,src=/tmp/.buildx-cache" \
             --cache-to "type=local,dest=/tmp/.buildx-cache" \
-            --tag 344410514032.dkr.ecr.us-east-1.amazonaws.com/vivrepo:latest \
+            --tag public.ecr.aws/o2n9l6n3/vivrepo:latest \
             .
-
-          docker push 344410514032.dkr.ecr.us-east-1.amazonaws.com/vivrepo:latest
+          docker push public.ecr.aws/o2n9l6n3/vivrepo:latest
