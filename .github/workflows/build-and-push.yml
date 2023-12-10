@@ -30,7 +30,7 @@ jobs:
             aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
             aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             region: us-east-1  # Replace with your AWS region
-            registry-type: pubic
+            registry-type: public
             mask-password: false
             skip-logout: false
       - name: Setup Docker Buildx
